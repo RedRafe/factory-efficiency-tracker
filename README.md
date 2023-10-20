@@ -1,1 +1,3 @@
-# factory-efficiency-tracker
+### Factory Efficiency Tracker
+
+The Uptime Tracking and Visualization mod for Factorio allows players to monitor the uptime and downtime ratios of their assembling machines. This real-time tracking is accomplished through the use of colorful overlays which provide a clear visual representation of the stats for each machine. With this mod, Factorio players can easily identify and address any issues with their manufacturing process, resulting in improved productivity and efficiency.
