@@ -38,3 +38,20 @@ But sometimes, the expected behavior can be far from reality and the design does
 
 ### Known bugs & compatibility
 As a QoL mod, this should be compatible with any other mods. Please feel free to report any issue on the mod portal page, on GitHub, or over on my Discord.
+
+
+---
+
+### FAQs
+
+- Does this mod replace calculator tools or bottleneck tools?
+> No, each mod has its own functionality & scope and will tell you different information about your factory.
+
+- Is it compatible with the other tools?
+> Yes
+
+- It doesn't show the values on top of the machines
+> Check you've toggled the "clock" icon (Efficiency Tracker). If it doesn't show, please report the issue
+
+- It shows <100 even if it's running full speed
+> *FET* keeps track of the machine's activity from the moment it was built for its lifetime. The more time passes, the more the shown value will come close to the actual uptime ratio of the target machine. (i.e. if the machine starts crating after 5minute sit got build, the value will be low, but over a 10h period, those 5mins become really insignificant and the value will be closer to 100%)
