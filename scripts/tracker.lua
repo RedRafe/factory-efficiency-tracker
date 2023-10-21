@@ -39,6 +39,7 @@ local function on_destroyed(event)
   local bucket_index = ID % FET_UPDATE_INTERVAL
   local bucket = global.schedule[bucket_index] or {}
   local unit = bucket[ID]
+  if not unit then return end
   local r_ID = unit.render_ID or false
   if r_ID and rendering.is_valid(r_ID) then rendering.destroy(r_ID) end
   bucket[ID] = nil
