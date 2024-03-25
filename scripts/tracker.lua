@@ -6,7 +6,7 @@ end
 --- @param tick uint
 local function on_built(event)
   local entity = event.created_entity or event.entity
-  if not entity then return end
+  if not (entity and entity.valid) then return end
 
   local _t = entity.type
   if _t ~= 'assembling-machine' and _t ~= 'furnace' then return end
@@ -30,7 +30,7 @@ end
 --- @param entity/created_entity LuaEntity
 local function on_destroyed(event)
   local entity = event.entity
-  if not entity then return end
+  if not (entity and entity.valid) then return end
 
   local _t = entity.type
   if _t ~= 'assembling-machine' and _t ~= 'furnace' then return end

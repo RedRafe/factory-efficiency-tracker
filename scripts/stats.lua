@@ -1,8 +1,16 @@
 --- @param entity LuaEntity
 local function get_recipe_time(entity)
-  if not entity then return false end
-  local r = (entity.type == "furnace") and entity.previous_recipe or entity.get_recipe()
-  return r and r.energy or false
+  if not (entity and entity.valid) then
+    return false
+  end
+
+  local r = false
+  if entity.type == 'furnace' then
+    local r = entity.previous_recipe
+  else
+    r =  entity.get_recipe()
+  end
+  return r and r.valid and r.energy or false
 end
 
 local function box(selection_box, b)
