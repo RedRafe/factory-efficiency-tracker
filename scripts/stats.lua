@@ -1,3 +1,8 @@
+local math_min = math.min
+local math_max = math.max
+local math_floor = math.floor
+local draw_text = rendering.draw_text
+
 --- @param entity LuaEntity
 local function get_recipe_time(entity)
   if not (entity and entity.valid) then
@@ -13,29 +18,14 @@ local function get_recipe_time(entity)
   return r and r.valid and r.energy or false
 end
 
-local function box(selection_box, b)
-  local lt = selection_box.left_top
-  local rb = selection_box.right_bottom
-  return {
-    left_top = { 
-      x = (lt.x or lt[1]) + b,
-      y = (lt.y or lt[2]) + b
-    },
-    right_bottom = {
-      x = (rb.x or rb[1]) - b,
-      y = (rb.y or rb[2]) - b
-    }
-  }
-end
-
 local function setup()
-  global.enabled = false --[[as bool|number]]
+  storage.enabled = false --[[as bool|number]]
 end
 
--- global.enabled acts strange, it could be 'boolean' or 'number' (true, false, tick)
--- When it transitions from 'true' to 'false', it becomes 'tick' until a full cycle is exausted,
--- then it becomes false untile turned on again.
--- Compressing its behaviour to 1 var at 'on_toggle' simplifies the conditions to be checkd at 'on_tick'
+-- storage.enabled acts strange, it could be 'boolean' or 'number' (true, false, tick)
+-- When it transitions from 'true' to 'false', it becomes 'tick' until a full cycle is exhausted,
+-- then it becomes false until turned on again.
+-- Compressing its behavior to 1 var at 'on_toggle' simplifies the conditions to be checked at 'on_tick'
 --- @param player_index uint
 --- @param prototype_name string
 --- @param name defines.events.on_lua_shortcut
@@ -43,11 +33,11 @@ end
 local function on_toggle(event)
   if (event.input_name or event.prototype_name) ~= 'fet_shortcut' then return end
 
-  if global.enabled == true then global.enabled = event.tick
-  else global.enabled = true end
+  if storage.enabled == true then storage.enabled = event.tick
+  else storage.enabled = true end
 
   for _, player in pairs(game.players) do
-    player.set_shortcut_toggled('fet_shortcut', global.enabled == true)
+    player.set_shortcut_toggled('fet_shortcut', storage.enabled == true)
   end
 end
 
@@ -63,15 +53,14 @@ local function update_stats(unit, tick)
 
   local count = entity.products_finished or 0
   local ratio = (time * 60 * count) / (tick - unit.tick) / (1 + entity.productivity_bonus) / entity.crafting_speed
-  ratio = math.min(ratio, 1)
-  ratio = math.max(ratio, 0)
+  ratio = math_min(ratio, 1)
+  ratio = math_max(ratio, 0)
   unit.ratio = ratio
 
   -- init render
-  if not unit.render_ID then
-    local sb = box(entity.selection_box, 0.1)
-    unit.render_ID = rendering.draw_text({
-      text = tostring(math.floor(ratio * 100)),
+  if not unit.render then
+    unit.render = draw_text({
+      text = tostring(math_floor(ratio * 100)),
       color = { r = 0, g = 0, b = 0, a = 0.3 },
       target = entity.position,
       surface = entity.surface,
@@ -80,43 +69,43 @@ local function update_stats(unit, tick)
   end
 end
 
---- @param r_ID uint (LuaReendering->ID)
-local function update_render(r_ID, p)
-  if not r_ID or not p then return end
-  rendering.set_visible(r_ID, true)
-  rendering.set_text(r_ID, tostring(math.floor(p * 100))) 
-  rendering.set_color(r_ID, { r = 1 - p, g = p, b = 0, a = 1 })
+--- @param render LuaRenderObject
+local function update_render(render, p)
+  if not (render and render.valid) or not p then return end
+  render.visible = true
+  render.text = tostring(math_floor(p * 100))
+  render.color = { r = 1 - p, g = p, b = 0, a = 1 }
 end
 
---- @param r_ID uint (LuaReendering->ID)
-local function remove_render(r_ID)
-  if not r_ID then return end
-  rendering.set_visible(r_ID, false)
+--- @param render LuaRenderObject
+local function remove_render(render)
+  if not (render and render.valid) then return end
+  render.visible = false
 end
 
 --- @param name defines.events.on_tick
 --- @param tick uint
 local function on_tick(event)
-  if not global.enabled then return end
+  if not storage.enabled then return end
 
   local tick = event.tick
-  if global.enabled ~= true and tick - global.enabled > FET_UPDATE_INTERVAL then
-    global.enabled = false
+  if storage.enabled ~= true and tick - storage.enabled > FET_UPDATE_INTERVAL then
+    storage.enabled = false
     return
   end
 
   local bucket_index = tick % FET_UPDATE_INTERVAL
-  local bucket = global.schedule[bucket_index]
+  local bucket = storage.schedule[bucket_index]
   if not bucket then return end
 
-  if global.enabled == true then
+  if storage.enabled == true then
     for _, unit in pairs(bucket) do
       update_stats(unit, tick)
-      update_render(unit.render_ID, unit.ratio)
+      update_render(unit.render, unit.ratio)
     end
   else
     for _, unit in pairs(bucket) do
-      remove_render(unit.render_ID)
+      remove_render(unit.render)
     end
   end
 end

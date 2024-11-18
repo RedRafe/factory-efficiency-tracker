@@ -1,4 +1,4 @@
-local handler = require "__core__.lualib.event_handler"
+local handler = require '__core__.lualib.event_handler'
 
 ---@class ScriptLib
 ---@field add_commands? fun()
@@ -11,7 +11,7 @@ local handler = require "__core__.lualib.event_handler"
 
 FET_UPDATE_INTERVAL = 127
 
-handler.add_libraries{
-  require "scripts.tracker",
-  require "scripts.stats"
+handler.add_libraries {
+  require 'scripts.tracker',
+  require 'scripts.stats',
 }
