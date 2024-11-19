@@ -102,12 +102,15 @@ local function on_tick(event)
   if not bucket then return end
 
   if storage.enabled == true then
-    for id, unit in pairs(bucket) do
+    for ID, unit in pairs(bucket) do
       if unit.entity and unit.entity.valid then
         update_stats(unit, tick)
         update_render(unit.render, unit.ratio)
       else
-        bucket[id] = nil
+        if unit.render and unit.render.valid then
+          unit.render.destroy()
+        end
+        bucket[ID] = nil
       end
     end
   else

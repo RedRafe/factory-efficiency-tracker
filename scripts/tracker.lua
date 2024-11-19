@@ -103,6 +103,7 @@ Tracker.events = {
   [defines.events.on_robot_mined_entity]  = on_destroyed,
   [defines.events.on_entity_died]         = on_destroyed,
   [defines.events.script_raised_destroy]  = on_destroyed,
+  [defines.events.on_space_platform_mined_entity] = on_destroyed,
 }
 
 return Tracker
