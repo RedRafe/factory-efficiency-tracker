@@ -11,7 +11,10 @@ local function get_recipe_time(entity)
 
   local r = false
   if entity.type == 'furnace' then
-    local r = entity.previous_recipe
+    local r_pair = entity.previous_recipe and entity.previous_recipe.name 
+    if r_pair then
+      r = prototypes.recipe[r_pair.name]
+    end
   else
     r =  entity.get_recipe()
   end
